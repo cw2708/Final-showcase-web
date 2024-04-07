@@ -1,6 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700&display=swap');
+// Fonts
+@font-face {
+  font-family: 'CopperHewitt-BoldItalic';
+  src: url('./Fonts/cooper-hewitt/CooperHewitt-BoldItalic.otf') format('opentype');
+}
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+// HTML CSS 
+html,
+body{
+  margin:0 auto;
+}
 
-html, 
-body {
-  font-family: 'Montserrat', sans-serif;
+// Navbar CSS
+
+.Visvine-Nav-Banner{
+  display:flex;
+  justify-content: space-between;
+  background-color: white;
+  box-shadow: 0px 1px 8px #78D870 ;
+  height: 8vh;
+}
+.Visvine-Title{
+  margin-left: 25px;
+  background: linear-gradient(to right, #78d870, #00BF63);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'CopperHewitt-BoldItalic';
+  font-size: 4vh;
+  margin-top: 2vh;
+  margin-bottom: auto;
+}
+.button, 
+#Sign-in
+{
+  background-color: #78D870;
+  color: white;
+  height: 5vh;
+  width: 8vw;
+  border:none;
+  border-radius: 8px;
+  margin-right: 2vw;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+  font-size: medium;
 }
