@@ -3,9 +3,7 @@ import { Outlet } from 'react-router-dom'
 export default function Layout() {
   return (
     <>
-      <header>
-        <h1>Visvine</h1>
-      </header>
+      <header></header>
       <main>
         <Outlet />
       </main>

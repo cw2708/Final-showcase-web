@@ -1,39 +1,53 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
   const { isAuthenticated, logout, loginWithRedirect } = useAuth0()
-  const auth = useAuth0()
-  // TODO: replace placeholder user object with the one from auth0
-  const user = {
-    nickname: auth.user?.name,
-  }
+  const navigate = useNavigate()
 
   const handleSignOut = () => {
-    // console.log('sign out')
     logout()
   }
 
   const handleSignIn = () => {
     loginWithRedirect()
-    console.log(user.nickname)
-    // console.log('sign in'
+  }
+
+  const handleDashboardClick = () => {
+    navigate('/Dashboard')
+  }
+  const handleFavouritesClick = () => {
+    navigate('/Favourites')
+  }
+  const handleDetectorClick = () => {
+    navigate('/Detector')
   }
 
   return (
-    <>
-      <div className="Visvine-Nav-Banner">
-        <h1 className="Visvine-Title">Visvine</h1>
-        {isAuthenticated ? (
+    <div className="Visvine-Nav-Banner">
+      <h1 className="Visvine-Title">Visvine</h1>
+      {isAuthenticated ? (
+        <div id="button-div">
+          <button className="Button-2" onClick={handleDetectorClick}>
+            Detector
+          </button>
+          <button className="Button-2" onClick={handleFavouritesClick}>
+            Favourites
+          </button>
+          <button className="Button-2" onClick={handleDashboardClick}>
+            Dashboard
+          </button>
           <button className="Button" id="Sign-in-out" onClick={handleSignOut}>
             Sign out
           </button>
-        ) : (
-          <button className="Button" id="Sign-in-out" onClick={handleSignIn}>
-            Sign in
-          </button>
-        )}
-      </div>
-    </>
+        </div>
+      ) : (
+        <button className="Button" id="Sign-in-out" onClick={handleSignIn}>
+          Sign in
+        </button>
+      )}
+    </div>
   )
 }
+
 export default Navbar
