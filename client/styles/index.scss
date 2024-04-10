@@ -124,3 +124,53 @@ video {
   box-shadow: 0px 4px 11px -6px;
   margin-top: 15px;
 }
+.title-container{
+  margin-top: 2vh;
+  display:flex;
+  justify-content: center;
+}
+.product-title{
+  font-family: "Open Sans", sans-serif;
+  color:#00BF63
+}
+
+.detection-results {
+  position: relative;
+  margin-top:8.5vh;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-top: 4px solid #78d870;
+}
+
+.detection-result {
+  margin-bottom: 8px;
+}
+
+.class-name {
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  font-size: x-large;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color:#00BF63;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+}
+
+.confidence {
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  font-size: larger;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color:#00BF63;
+}
+
+.bounding-box {
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  font-size: larger;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  color:#00BF63;
+}

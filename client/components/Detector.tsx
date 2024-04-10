@@ -84,16 +84,49 @@ const CameraComponent: React.FC = () => {
           body: JSON.stringify({ image_data: base64Image }),
         })
         const fetchData = await fetchResponse.json()
-        console.log(fetchData)
+        if (fetchData.detections && fetchData.detections.length > 0) {
+          setDetectionResults(fetchData.detections)
+        }
       } catch (error) {
         console.error('Error:', error)
       }
     }
   }
+  const [detectionResults, setDetectionResults] = useState<
+    {
+      class_id: number
+      class_name: string
+      confidence: number
+      bounding_box: number[]
+    }[]
+  >([])
+
+  const DetectionResults: React.FC<{ results: typeof detectionResults }> = ({
+    results,
+  }) => {
+    return (
+      <div className="detection-results">
+        {results.map((result, index) => (
+          <div key={index} className="detection-result">
+            <div className="class-name">{result.class_name}</div>
+            <div className="confidence">
+              Confidence: {result.confidence.toFixed(2)}
+            </div>
+            <div className="bounding-box">
+              Bounding Box: {result.bounding_box.join(', ')}
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div>
       <Navbar />
+      <div className="title-container">
+        <h1 className="product-title">Product Detector Prototype</h1>
+      </div>
       <div id="camera">
         <video id="viewfinder" ref={viewfinderRef} autoPlay playsInline>
           <track kind="captions" src="" srcLang="en" label="English" />
@@ -102,6 +135,9 @@ const CameraComponent: React.FC = () => {
       <div id="button-container">
         <button className="circular-button" onClick={toggleDisplay}></button>
       </div>
+      {detectionResults.length > 0 && (
+        <DetectionResults results={detectionResults} />
+      )}
     </div>
   )
 }
