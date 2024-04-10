@@ -5,7 +5,7 @@ export default function Detector() {
   const [members, setMembers] = useState([])
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/members')
+    fetch('/api/detection/members')
       .then((res) => res.json())
       .then((data) => {
         setMembers(data.members)
