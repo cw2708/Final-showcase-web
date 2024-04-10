@@ -34,6 +34,21 @@ body{
 #button-div{
   margin-top:auto;
   margin-bottom:auto;
+  display: flex;
+}
+
+.Nav-links{
+  font-family: "Open Sans", sans-serif;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  color: #78d870;
+  text-decoration: underline;
+  background-color: white;
+  border-style: none;
+  cursor:pointer;
+}
+.Nav-links:Hover{
+  color: #00BF63;
 }
 
 
@@ -46,6 +61,7 @@ body{
   border: none;
   border-radius: 8px;
   margin-right: 2vw;
+  margin-left: 1vw;
   margin-top: auto;
   margin-bottom: auto;
   font-family: "Open Sans", sans-serif;

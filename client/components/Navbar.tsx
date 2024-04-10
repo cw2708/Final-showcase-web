@@ -28,14 +28,14 @@ function Navbar() {
       <h1 className="Visvine-Title">Visvine</h1>
       {isAuthenticated ? (
         <div id="button-div">
-          <button className="Button-2" onClick={handleDetectorClick}>
-            Detector
+          <button className="Nav-links" onClick={handleDetectorClick}>
+            <h2>Detector</h2>
           </button>
-          <button className="Button-2" onClick={handleFavouritesClick}>
-            Favourites
+          <button className="Nav-links" onClick={handleFavouritesClick}>
+            <h2>Favourites</h2>
           </button>
-          <button className="Button-2" onClick={handleDashboardClick}>
-            Dashboard
+          <button className="Nav-links" onClick={handleDashboardClick}>
+            <h2>Dashboard</h2>
           </button>
           <button className="Button" id="Sign-in-out" onClick={handleSignOut}>
             Sign out
