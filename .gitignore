@@ -21,3 +21,5 @@ coverage/*
 
 # Local enviroment
 venv/
+
+/storage

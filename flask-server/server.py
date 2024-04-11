@@ -1,12 +1,13 @@
 
 from flask import Flask, jsonify, request
+
 from ultralytics import YOLO
 import base64
 import numpy as np
 import cv2
 
 app = Flask(__name__)
-model = YOLO('yolov8n.pt')
+model = YOLO('./storage/yolov8n.pt')
 
 @app.route("/api/detection")
 def index():
@@ -43,4 +44,4 @@ def detect():
         return jsonify({"error": "No image data provided"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
