@@ -13,19 +13,15 @@ model = YOLO('./storage/yolov8n.pt')
 def index():
     return "Hello, World!"
 
-@app.route("/api/detection/members")
-def members():
-    return jsonify({"members": ["Member1", "Member2", "Member3"]})
-
 @app.route("/api/detection/detect", methods=['POST'])
 def detect():
     if 'image_data' in request.json:
         image_data = request.json['image_data']
-        image_data += "=" * ((4 - len(image_data) % 4) % 4)  # Add padding if necessary
+        image_data += "=" * ((4 - len(image_data) % 4) % 4) 
         image_bytes = base64.b64decode(image_data)
         image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-        results = model(image)
+        results = model(image, conf=0.8)
 
         detections = []
         for result in results:

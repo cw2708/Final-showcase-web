@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Navbar from './Navbar'
+import { useNavigate } from 'react-router-dom'
 
 const CameraComponent: React.FC = () => {
   const [isCapturedImageDisplayed, setIsCapturedImageDisplayed] =
     useState<boolean>(false)
   const [capturedImage, setCapturedImage] = useState<string | null>(null)
   const viewfinderRef = useRef<HTMLVideoElement>(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (isCapturedImageDisplayed && capturedImage) {
@@ -40,6 +42,13 @@ const CameraComponent: React.FC = () => {
           capturedImageElement.remove()
         }
         viewfinder.style.display = 'block'
+        const container = document.getElementById('camera')
+        if (container) {
+          const buttons = container.querySelectorAll('button')
+          buttons.forEach((button) => {
+            button.remove()
+          })
+        }
       } else {
         const canvas = document.createElement('canvas')
         const context = canvas.getContext('2d')
@@ -72,7 +81,7 @@ const CameraComponent: React.FC = () => {
         console.log(fetchData)
         if (fetchData.detections && fetchData.detections.length > 0) {
           setDetectionResults(fetchData.detections)
-          drawRectangles(fetchData.detections)
+          // drawRectangles(fetchData.detections)
         }
       } catch (error) {
         console.error('Error:', error)
@@ -80,52 +89,53 @@ const CameraComponent: React.FC = () => {
     }
   }
 
-  const drawRectangles = (detections: any[]) => {
-    const img = new Image()
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      const context = canvas.getContext('2d') as CanvasRenderingContext2D
+  // const drawRectangles = (detections: any[]) => {
+  //   const img = new Image()
+  //   img.onload = () => {
+  //     const canvas = document.createElement('canvas')
+  //     const context = canvas.getContext('2d') as CanvasRenderingContext2D
 
-      // Set canvas dimensions based on the image dimensions
-      canvas.width = img.width
-      canvas.height = img.height
+  //     // Set canvas dimensions based on the image dimensions
+  //     canvas.width = img.width
+  //     canvas.height = img.height
 
-      // Draw the image onto the canvas
-      context.drawImage(img, 0, 0)
+  //     // Draw the image onto the canvas
+  //     context.drawImage(img, 0, 0)
 
-      // Draw rectangles for each detection
-      detections.forEach((detection) => {
-        const [x, y, width, height] = detection.bounding_box
-        context.beginPath()
-        context.rect(x, y, width, height)
-        context.lineWidth = 2
-        context.strokeStyle = 'red'
-        context.stroke()
-      })
+  //     // Draw rectangles for each detection
+  //     detections.forEach((detection) => {
+  //       const [x, y, width, height] = detection.bounding_box
+  //       context.beginPath()
+  //       context.rect(x, y, width, height)
+  //       context.lineWidth = 6
+  //       context.strokeStyle = 'Green'
+  //       context.stroke()
+  //     })
 
-      // Convert the edited canvas to a data URL
-      const editedImageDataURL = canvas.toDataURL('image/jpeg')
+  //     // Convert the edited canvas to a data URL
+  //     const editedImageDataURL = canvas.toDataURL('image/jpeg')
 
-      // Create a new image element for the edited image
-      const capturedImageView = new Image()
-      capturedImageView.src = editedImageDataURL
-      capturedImageView.id = 'captured-image'
+  //     // Create a new image element for the edited image
+  //     const capturedImageView = new Image()
+  //     capturedImageView.src = editedImageDataURL
+  //     capturedImageView.id = 'captured-image'
 
-      // Remove previous captured image
-      const previousCapturedImage = document.getElementById('captured-image')
-      if (previousCapturedImage) {
-        previousCapturedImage.remove()
-      }
+  //     // Remove previous captured image
+  //     const previousCapturedImage = document.getElementById('captured-image')
+  //     if (previousCapturedImage) {
+  //       previousCapturedImage.remove()
+  //     }
 
-      // Append the new image element to the DOM
-      const cameraDiv = document.getElementById('camera')
-      if (cameraDiv) {
-        cameraDiv.appendChild(capturedImageView)
-      }
-    }
-    // Access capturedImage directly from the component's state
-    img.src = capturedImage as string
-  }
+  //     // Append the new image element to the DOM
+  //     const cameraDiv = document.getElementById('camera')
+  //     if (cameraDiv) {
+  //       cameraDiv.appendChild(capturedImageView)
+  //     }
+  //   }
+  //   // Access capturedImage directly from the component's state
+  //   img.src = capturedImage as string
+  // }
+
   const [detectionResults, setDetectionResults] = useState<
     {
       class_id: number
@@ -155,6 +165,41 @@ const CameraComponent: React.FC = () => {
     )
   }
 
+  const drawButtons = (
+    detections: any[],
+    handleDetectionClick: (detection: any) => void,
+    container: HTMLElement,
+  ) => {
+    detections.forEach((detection, index) => {
+      const [x, y, width, height] = detection.bounding_box
+
+      // Create a button for each rectangle
+      const button = document.createElement('button')
+      button.style.position = 'absolute'
+      button.style.left = `${x}px`
+      button.style.top = `${y}px`
+      button.style.width = `${width}px`
+      button.style.height = `${height}px`
+      button.style.cursor = 'pointer'
+      button.addEventListener('click', () => handleDetectionClick(detection))
+      button.textContent = `Button ${index + 1}`
+
+      container.appendChild(button)
+    })
+  }
+
+  useEffect(() => {
+    if (detectionResults.length > 0) {
+      const container = document.getElementById('camera')
+      if (container) {
+        drawButtons(detectionResults, handleDetectionClick, container)
+      }
+    }
+  }, [detectionResults])
+
+  const handleDetectionClick = () => {
+    navigate('/Favourites')
+  }
   return (
     <div>
       <Navbar />
