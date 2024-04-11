@@ -91,7 +91,7 @@ const CameraComponent: React.FC = () => {
   const cameraDiv = document.getElementById('camera')
   if (cameraDiv) {
     cameraDiv.style.backgroundImage = `url(${capturedImage})`
-    cameraDiv.style.backgroundSize = 'fill'
+    cameraDiv.style.backgroundSize = 'cover'
     cameraDiv.style.backgroundPosition = 'center'
   }
   const [detectionResults, setDetectionResults] = useState<
