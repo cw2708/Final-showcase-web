@@ -49,21 +49,6 @@ const CameraComponent: React.FC = () => {
           context.drawImage(viewfinder, 0, 0, canvas.width, canvas.height)
           const capturedImageDataURL = canvas.toDataURL('image/jpeg')
 
-          const capturedImageView = new Image()
-          capturedImageView.src = capturedImageDataURL
-          capturedImageView.id = 'captured-image'
-
-          const previousCapturedImage =
-            document.getElementById('captured-image')
-          if (previousCapturedImage) {
-            previousCapturedImage.remove()
-          }
-
-          const cameraDiv = document.getElementById('camera')
-          if (cameraDiv) {
-            cameraDiv.appendChild(capturedImageView)
-          }
-
           setCapturedImage(capturedImageDataURL)
         }
         viewfinder.style.display = 'none'
@@ -84,13 +69,62 @@ const CameraComponent: React.FC = () => {
           body: JSON.stringify({ image_data: base64Image }),
         })
         const fetchData = await fetchResponse.json()
+        console.log(fetchData)
         if (fetchData.detections && fetchData.detections.length > 0) {
           setDetectionResults(fetchData.detections)
+          drawRectangles(fetchData.detections)
         }
       } catch (error) {
         console.error('Error:', error)
       }
     }
+  }
+
+  const drawRectangles = (detections: any[]) => {
+    const img = new Image()
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      const context = canvas.getContext('2d') as CanvasRenderingContext2D
+
+      // Set canvas dimensions based on the image dimensions
+      canvas.width = img.width
+      canvas.height = img.height
+
+      // Draw the image onto the canvas
+      context.drawImage(img, 0, 0)
+
+      // Draw rectangles for each detection
+      detections.forEach((detection) => {
+        const [x, y, width, height] = detection.bounding_box
+        context.beginPath()
+        context.rect(x, y, width, height)
+        context.lineWidth = 2
+        context.strokeStyle = 'red'
+        context.stroke()
+      })
+
+      // Convert the edited canvas to a data URL
+      const editedImageDataURL = canvas.toDataURL('image/jpeg')
+
+      // Create a new image element for the edited image
+      const capturedImageView = new Image()
+      capturedImageView.src = editedImageDataURL
+      capturedImageView.id = 'captured-image'
+
+      // Remove previous captured image
+      const previousCapturedImage = document.getElementById('captured-image')
+      if (previousCapturedImage) {
+        previousCapturedImage.remove()
+      }
+
+      // Append the new image element to the DOM
+      const cameraDiv = document.getElementById('camera')
+      if (cameraDiv) {
+        cameraDiv.appendChild(capturedImageView)
+      }
+    }
+    // Access capturedImage directly from the component's state
+    img.src = capturedImage as string
   }
   const [detectionResults, setDetectionResults] = useState<
     {
