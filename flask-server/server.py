@@ -21,7 +21,7 @@ def detect():
         image_bytes = base64.b64decode(image_data)
         image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-        results = model(image, conf=0.8)
+        results = model(image, conf=0.75)
 
         detections = []
         for result in results:

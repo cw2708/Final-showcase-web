@@ -17,8 +17,15 @@ const CameraComponent: React.FC = () => {
 
   useEffect(() => {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const constraints: MediaStreamConstraints = {
+        video: {
+          aspectRatio: 16 / 9,
+          facingMode: 'environment', // Use the rear camera if available
+        },
+      }
+
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia(constraints)
         .then(function (stream) {
           if (viewfinderRef.current) {
             viewfinderRef.current.srcObject = stream
@@ -32,7 +39,6 @@ const CameraComponent: React.FC = () => {
       console.error('getUserMedia is not supported in this browser.')
     }
   }, [])
-
   const toggleDisplay = async () => {
     const viewfinder = viewfinderRef.current
     if (viewfinder) {
@@ -49,16 +55,37 @@ const CameraComponent: React.FC = () => {
           buttons.forEach((button) => {
             button.remove()
           })
+          const canvas = container.querySelectorAll('canvas')
+          canvas.forEach((canvas) => {
+            canvas.remove()
+          })
         }
       } else {
+        const cameraDiv = document.getElementById('camera')
+        if (!cameraDiv) {
+          console.error('cameraDiv not found')
+          return // Exit the function if cameraDiv is null
+        }
         const canvas = document.createElement('canvas')
         const context = canvas.getContext('2d')
-        if (context && viewfinder.videoWidth && viewfinder.videoHeight) {
-          canvas.width = viewfinder.videoWidth
-          canvas.height = viewfinder.videoHeight
-          context.drawImage(viewfinder, 0, 0, canvas.width, canvas.height)
+        if (
+          context &&
+          viewfinder.videoWidth &&
+          viewfinder.videoHeight &&
+          cameraDiv
+        ) {
+          canvas.width = cameraDiv.offsetWidth
+          canvas.height = cameraDiv.offsetHeight
+          context.drawImage(
+            viewfinder,
+            0,
+            0,
+            cameraDiv.offsetWidth,
+            cameraDiv.offsetHeight,
+          )
           const capturedImageDataURL = canvas.toDataURL('image/jpeg')
 
+          // Here, you can do something with the captured image, such as displaying it or saving it
           setCapturedImage(capturedImageDataURL)
         }
         viewfinder.style.display = 'none'
@@ -66,7 +93,6 @@ const CameraComponent: React.FC = () => {
       setIsCapturedImageDisplayed(!isCapturedImageDisplayed)
     }
   }
-
   const handleImageUpload = async () => {
     if (capturedImage) {
       try {
@@ -88,12 +114,25 @@ const CameraComponent: React.FC = () => {
       }
     }
   }
-  const cameraDiv = document.getElementById('camera')
-  if (cameraDiv) {
-    cameraDiv.style.backgroundImage = `url(${capturedImage})`
-    cameraDiv.style.backgroundSize = 'cover'
-    cameraDiv.style.backgroundPosition = 'center'
-  }
+  useEffect(() => {
+    const cameraDiv = document.getElementById('camera')
+    const viewfinder = viewfinderRef.current
+
+    if (cameraDiv && viewfinder) {
+      // Set the background image of the cameraDiv to the capturedImage
+      cameraDiv.style.backgroundImage = capturedImage
+        ? `url(${capturedImage})`
+        : ''
+
+      // Set background size and position to cover and center respectively
+      cameraDiv.style.backgroundSize = 'cover'
+      cameraDiv.style.backgroundPosition = 'center'
+
+      // Set cameraDiv dimensions to match the viewfinder dimensions
+      cameraDiv.style.width = `${viewfinder.videoWidth}px`
+      cameraDiv.style.height = `${viewfinder.videoHeight}px`
+    }
+  }, [capturedImage])
   const [detectionResults, setDetectionResults] = useState<
     {
       class_id: number
@@ -123,26 +162,75 @@ const CameraComponent: React.FC = () => {
     )
   }
 
-  const drawButtons = (
+  // const drawButtons = (
+  //   detections: any[],
+  //   handleDetectionClick: (detection: any) => void,
+  //   container: HTMLElement,
+  // ) => {
+  //   detections.forEach((detection, index) => {
+  //     const [x, y, width, height] = detection.bounding_box
+
+  //     // Create a button for each rectangle
+  //     const button = document.createElement('button')
+  //     button.style.position = 'absolute'
+  //     button.style.left = `${x}px`
+  //     button.style.top = `${y}px`
+  //     button.style.width = `${width}px`
+  //     button.style.height = `${height}px`
+  //     button.style.cursor = 'pointer'
+  //     button.addEventListener('click', () => handleDetectionClick(detection))
+  //     button.textContent = `Button ${index + 1}`
+
+  //     container.appendChild(button)
+  //   })
+  // }
+  const drawRectangles = (
     detections: any[],
-    handleDetectionClick: (detection: any) => void,
+    handleObjClick: (detection: any) => void,
     container: HTMLElement,
+    viewfinder: HTMLVideoElement | null,
   ) => {
+    if (!viewfinder) {
+      console.error('viewfinder is null')
+      return // Exit the function if viewfinder is null
+    }
+
+    const cameraDiv = document.getElementById('camera')
+    if (!cameraDiv) {
+      console.error('cameraDiv not found')
+      return // Exit the function if cameraDiv is null
+    }
+
+    const canvas = document.createElement('canvas')
+    canvas.width = cameraDiv.offsetWidth
+    canvas.height = cameraDiv.offsetHeight
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D
+    container.appendChild(canvas)
+
     detections.forEach((detection, index) => {
       const [x, y, width, height] = detection.bounding_box
 
-      // Create a button for each rectangle
-      const button = document.createElement('button')
-      button.style.position = 'absolute'
-      button.style.left = `${x}px`
-      button.style.top = `${y}px`
-      button.style.width = `${width}px`
-      button.style.height = `${height}px`
-      button.style.cursor = 'pointer'
-      button.addEventListener('click', () => handleDetectionClick(detection))
-      button.textContent = `Button ${index + 1}`
+      // Draw rectangle
+      context.beginPath()
+      context.rect(x, y, width, height)
+      context.lineWidth = 2
+      context.strokeStyle = 'red'
+      context.stroke()
 
-      container.appendChild(button)
+      // Add click event listener to the canvas
+      canvas.addEventListener('click', (event) => {
+        const rect = canvas.getBoundingClientRect()
+        const clickX = event.clientX - rect.left
+        const clickY = event.clientY - rect.top
+        if (
+          clickX >= x &&
+          clickX <= x + width &&
+          clickY >= y &&
+          clickY <= y + height
+        ) {
+          handleObjClick(detection)
+        }
+      })
     })
   }
 
@@ -150,12 +238,24 @@ const CameraComponent: React.FC = () => {
     if (detectionResults.length > 0) {
       const container = document.getElementById('camera')
       if (container) {
-        drawButtons(detectionResults, handleDetectionClick, container)
+        drawRectangles(
+          detectionResults,
+          handleObjClick,
+          container,
+          viewfinderRef.current,
+        )
+
+        // Set background size to cover
+        container.style.backgroundSize = 'cover'
       }
     }
   }, [detectionResults])
 
   const handleDetectionClick = () => {
+    navigate('/Favourites')
+  }
+
+  const handleObjClick = () => {
     navigate('/Favourites')
   }
   return (
