@@ -21,12 +21,11 @@ def detect():
         image_bytes = base64.b64decode(image_data)
         image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-        results = model(image, conf=0.75)
-
+        results = model(image, save=True, conf=0.65, save_txt=True, imgsz=(576,1024))
         detections = []
         for result in results:
             for box in result.boxes:
-                x1, y1, x2, y2 = box.xyxy[0].tolist()
+                x1, y1, x2, y2 = box.xyxyn[0].tolist()
                 conf, cls = box.conf[0].item(), box.cls[0].item()
                 detections.append({
                     'class_id': int(cls),
