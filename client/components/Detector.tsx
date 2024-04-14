@@ -230,7 +230,7 @@ const CameraComponent: React.FC = () => {
       marker.style.cursor = 'pointer'
 
       marker.addEventListener('click', () => {
-        handleObjClick(detection)
+        handleObjClick()
       })
 
       const svgContent = `
