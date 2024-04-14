@@ -20,7 +20,7 @@ const CameraComponent: React.FC = () => {
       const constraints: MediaStreamConstraints = {
         video: {
           aspectRatio: 16 / 9,
-          facingMode: 'environment', // Use the rear camera if available
+          facingMode: 'environment',
         },
       }
 
@@ -76,13 +76,7 @@ const CameraComponent: React.FC = () => {
         ) {
           canvas.width = 1072
           canvas.height = 603
-          context.drawImage(
-            viewfinder,
-            0,
-            0,
-            cameraDiv.offsetWidth,
-            cameraDiv.offsetHeight,
-          )
+          context.drawImage(viewfinder, 0, 0, canvas.width, canvas.height)
           const capturedImageDataURL = canvas.toDataURL('image/jpeg')
 
           // Here, you can do something with the captured image, such as displaying it or saving it
@@ -161,7 +155,8 @@ const CameraComponent: React.FC = () => {
       </div>
     )
   }
-  const drawMarkers = (
+
+  const drawDetection = (
     detections: any[],
     handleObjClick: (detection: any) => void,
     container: HTMLElement,
@@ -178,20 +173,51 @@ const CameraComponent: React.FC = () => {
       return
     }
 
-    detections.forEach((detection, index) => {
-      const [x, y, width, height] = detection.bounding_box
+    const canvas = document.createElement('canvas')
+    canvas.width = 1072
+    canvas.height = 603
+    const original_height = 576
+    const original_width = 1024
+    const context = canvas.getContext('2d') as CanvasRenderingContext2D
+    container.appendChild(canvas)
 
-      const imageWidth = cameraDiv.offsetWidth
-      const imageHeight = cameraDiv.offsetHeight
-      const centerX = Math.max(
-        width / 2,
-        Math.min(imageWidth - width / 2, x + width / 2),
+    detections.forEach((detection, index) => {
+      const [norm_x, norm_y, norm_width, norm_height] = detection.bounding_box
+
+      // Convert normalized values to pixel values
+      const pixel_x_min = norm_x * original_width
+      const pixel_y_min = norm_y * original_height
+      const pixel_x_max = norm_width * original_width
+      const pixel_y_max = norm_height * original_height
+
+      // Scale the pixel values to match the display size
+      const scale_x = canvas.width / original_width
+      const scale_y = canvas.height / original_height
+
+      const scaled_pixel_x_min = pixel_x_min * scale_x
+      const scaled_pixel_y_min = pixel_y_min * scale_y
+      const scaled_pixel_x_max = pixel_x_max * scale_x
+      const scaled_pixel_y_max = pixel_y_max * scale_y
+
+      // Calculate the width and height of the scaled rectangle
+      const scaled_width = scaled_pixel_x_max - scaled_pixel_x_min
+      const scaled_height = scaled_pixel_y_max - scaled_pixel_y_min
+
+      // Calculate the center of the rectangle to place markers
+      const centerX = (scaled_pixel_x_min + scaled_pixel_x_max) / 2
+      const centerY = (scaled_pixel_y_min + scaled_pixel_y_max) / 2 - 50
+
+      // Draw the rectangle
+      context.beginPath()
+      context.lineWidth = 4
+      context.strokeStyle = 'green'
+      context.rect(
+        scaled_pixel_x_min,
+        scaled_pixel_y_min,
+        scaled_width,
+        scaled_height,
       )
-      const centerY =
-        Math.max(
-          height / 2,
-          Math.min(imageHeight - height / 2, y + height / 2),
-        ) - 50
+      context.stroke()
 
       const marker = document.createElement('button')
       marker.className = 'map-marker-button'
@@ -234,66 +260,10 @@ const CameraComponent: React.FC = () => {
       marker.innerHTML = svgContent
 
       container.appendChild(marker)
-    })
-  }
 
-  const drawRectangles = (
-    detections: any[],
-    container: HTMLElement,
-    viewfinder: HTMLVideoElement | null,
-  ) => {
-    if (!viewfinder) {
-      console.error('viewfinder is null')
-      return
-    }
-
-    const cameraDiv = document.getElementById('camera')
-    if (!cameraDiv) {
-      console.error('cameraDiv not found')
-      return
-    }
-
-    const canvas = document.createElement('canvas')
-    canvas.width = 1072
-    canvas.height = 603
-    const original_height = 576
-    const original_width = 1024
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D
-    container.appendChild(canvas)
-
-    detections.forEach((detection, index) => {
-      const [norm_x, norm_y, norm_width, norm_height] = detection.bounding_box
-
-      // Convert normalized coordinates to pixel values
-      const pixel_x = norm_x * original_width
-      const pixel_y = norm_y * original_height
-      const pixel_width = norm_width * original_width
-      const pixel_height = norm_height * original_height
-
-      // Calculate pixel coordinates for the bottom-right corner
-      const pixel_x_max = pixel_x + pixel_width
-      const pixel_y_max = pixel_y + pixel_height
-
-      // Scale the results to fit the new container size
-      const scale_x = canvas.width / original_width
-      const scale_y = canvas.height / original_height
-
-      const scaled_pixel_x = pixel_x * scale_x
-      const scaled_pixel_y = pixel_y * scale_y
-      const scaled_pixel_width = pixel_x_max - pixel_x * scale_x
-      const scaled_pixel_height = pixel_y_max - pixel_y * scale_y
-
-      // Draw the rectangle
-      context.beginPath()
-      context.lineWidth = 2
-      context.strokeStyle = 'red'
-      context.rect(
-        scaled_pixel_x,
-        scaled_pixel_y,
-        scaled_pixel_width,
-        scaled_pixel_height,
-      )
-      context.stroke()
+      const handleObjClick = () => {
+        navigate('/Favourites')
+      }
     })
   }
 
@@ -301,24 +271,17 @@ const CameraComponent: React.FC = () => {
     if (detectionResults.length > 0) {
       const container = document.getElementById('camera')
       if (container) {
-        drawMarkers(
+        drawDetection(
           detectionResults,
-          handleDetectionClick,
+          handleObjClick,
           container,
           viewfinderRef.current,
         )
 
-        drawRectangles(detectionResults, container, viewfinderRef.current)
-
-        // Set background size to cover
         container.style.backgroundSize = 'cover'
       }
     }
   }, [detectionResults])
-
-  const handleDetectionClick = () => {
-    navigate('/Favourites')
-  }
 
   return (
     <div>
@@ -342,3 +305,6 @@ const CameraComponent: React.FC = () => {
 }
 
 export default CameraComponent
+function handleObjClick(detection: any): void {
+  throw new Error('Function not implemented.')
+}

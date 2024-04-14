@@ -23,7 +23,7 @@ def detect():
 
         results = model(image, save=True, conf=0.65, save_txt=True, imgsz=(576,1024))
         detections = []
-        for result in results:
+        for result in results: 
             for box in result.boxes:
                 x1, y1, x2, y2 = box.xyxyn[0].tolist()
                 conf, cls = box.conf[0].item(), box.cls[0].item()
