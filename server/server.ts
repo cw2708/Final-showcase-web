@@ -1,9 +1,11 @@
 import express from 'express'
 import * as Path from 'node:path'
-
+import productRoutes from '../server/db/routes/products'
 const server = express()
 
 server.use(express.json())
+
+server.use('/api/products', productRoutes)
 
 if (process.env.NODE_ENV === 'production') {
   server.use(express.static(Path.resolve('public')))

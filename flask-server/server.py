@@ -21,7 +21,7 @@ def detect():
         image_bytes = base64.b64decode(image_data)
         image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)
 
-        results = model(image, save=True, conf=0.65, save_txt=True, imgsz=(576,1024))
+        results = model(image, conf=0.65, imgsz=(576,1024))
         detections = []
         for result in results: 
             for box in result.boxes:
@@ -40,4 +40,3 @@ def detect():
 
 if __name__ == "__main__":
     app.run(debug=True)
-    # app.run(host='0.0.0.0')
