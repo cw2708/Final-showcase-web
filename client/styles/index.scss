@@ -194,8 +194,8 @@ body{
   border-style: none;
   width: 55px;
   height: 73px;
-  overflow: hidden; /* Ensures the image doesn't overflow the button */
-  transition: transform 0.5s; /* Smooth transition for scaling */
+  overflow: hidden; 
+  transition: transform 0.5s; 
 }
 
 .map-marker-button:hover {
@@ -203,12 +203,84 @@ body{
 }
 
 .map-marker-button img {
-  width: 100%; /* Make the image fill the entire button */
-  height: 100%; /* Make the image fill the entire button */
-  transition: transform 0.5s; /* Smooth transition for scaling */
+  width: 100%; 
+  height: 100%; 
+  transition: transform 0.5s; 
   background-color: transparent;
 }
 
 .map-marker-button:hover img {
-  transform: scale(1.2); /* Scale the image on hover */
+  transform: scale(1.2); 
+}
+
+
+// Product page styling
+
+.container {
+  background-color: white;
+  width: 100%;
+  height: 95vh;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 9px;
+}
+
+#Product-Display-Div{
+  background-color: white;
+  width: 78%;
+  height:auto;
+  margin-bottom: 8vh;
+  border-radius: 25px;
+  border-style:solid;
+  border-width: 15px;
+  border-color: #78D870;
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: stretch;
+}
+#Product-Display-Nav{
+  width:100%;
+  background-color: green;
+  height:6vh;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+}
+
+
+#Product-Display-Image-Div{
+  background-color: white;
+  width: 55%;
+  height:60vh;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+#Product-Image{
+  width: 90%;
+  height: 90%;
+  border-style:solid;
+  border-radius: 25px;
+}
+
+#Product-Display-Info-Div{
+  background-color: hotpink;
+  width:45%;
+  height:60vh;
+}
+
+
+
+
+#Product-Display-Footer{
+  width:100%;
+  background-color: green;
+  height:8vh;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+
 }

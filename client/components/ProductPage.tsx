@@ -27,12 +27,22 @@ export default function ProductPage() {
   return (
     <>
       <Navbar />
-      <h1>Hello you have made it to the Product page</h1>
-      {products.map((detected: Product) => (
-        <ul key={detected.product_id}>
-          <li>{detected.product_name}</li>
-        </ul>
-      ))}
+      <div className="container">
+        <div id="Product-Display-Div">
+          <div id="Product-Display-Nav"></div>
+          <div id="Product-Display-Image-Div">
+            <img id="Product-Image"></img>
+          </div>
+          <div id="Product-Display-Info-Div"></div>
+          <div id="Product-Display-Footer"></div>
+        </div>
+      </div>
     </>
   )
 }
+
+// {products.map((detected: Product) => (
+//   <ul key={detected.product_id}>
+//     <li>{detected.product_name}</li>
+//   </ul>
+// ))}
