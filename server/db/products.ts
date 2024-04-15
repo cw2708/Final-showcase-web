@@ -1,10 +1,10 @@
 import connection from './connection.ts'
-import { product } from '../../models/product.ts'
+import { Product } from '../../models/product.ts'
 
-const columns = ['id', 'name']
+const columns = ['product_id', 'product_name']
 
-export async function getProducts(db = connection): Promise<product[]> {
+export async function getProducts(db = connection): Promise<Product[]> {
   return db('products')
     .select(...columns)
-    .orderBy('id')
+    .orderBy('product_id')
 }
