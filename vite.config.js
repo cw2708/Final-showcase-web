@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api/detection': 'https://visvine-api.pushed.nz',
-      '/api/v1': '/api/v1',
+      '/api/detection': 'http://127.0.0.1:5000',
+      '/api/v1': 'http://localhost:3000',
     },
   },
 })

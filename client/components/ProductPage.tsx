@@ -1,9 +1,14 @@
 import Navbar from './Navbar'
-import { useProducts } from '../hooks/hooks'
-import { Product } from '../../models/product' // Import the Product interface
+import { useParams } from 'react-router-dom'
+import { useProductById } from '../hooks/hooks'
 
 export default function ProductPage() {
-  const { data, isLoading, isError, error } = useProducts()
+  const { id } = useParams()
+  const productId = Number(id)
+
+  const { data, isLoading, isError, error } = useProductById(
+    productId.toString(),
+  )
 
   console.log('isLoading:', isLoading)
   console.log('isError:', isError)
@@ -18,11 +23,9 @@ export default function ProductPage() {
     return <div>Error: {error ? error.message : 'An error occurred'}</div>
   }
 
-  if (!data || !('product' in data)) {
-    return <div>No products available</div>
+  if (!data) {
+    return <div>No product available</div>
   }
-
-  const products = data.product as Product[]
 
   return (
     <>
@@ -31,18 +34,24 @@ export default function ProductPage() {
         <div id="Product-Display-Div">
           <div id="Product-Display-Nav"></div>
           <div id="Product-Display-Image-Div">
-            <img id="Product-Image"></img>
+            <img id="Product-Image" alt="Product"></img>
           </div>
-          <div id="Product-Display-Info-Div"></div>
-          <div id="Product-Display-Footer"></div>
+          <div id="Product-Display-Info-Div">
+            <div>
+              <h1 id="Product-Heading">{data.product.product_name}</h1>
+              <h2 id="Product-Price">{data.product.product_price}</h2>
+              <h4>Description:</h4>
+              <p></p>
+            </div>
+            <button id="Buy-Button">
+              <h2>Buy Now</h2>
+            </button>
+          </div>
+          <div id="Product-Display-Footer">
+            <h3 id="Product-Footer-Text">Powered By Visvine</h3>
+          </div>
         </div>
       </div>
     </>
   )
 }
-
-// {products.map((detected: Product) => (
-//   <ul key={detected.product_id}>
-//     <li>{detected.product_name}</li>
-//   </ul>
-// ))}

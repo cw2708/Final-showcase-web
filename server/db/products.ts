@@ -8,3 +8,10 @@ export async function getProducts(db = connection): Promise<Product[]> {
     .select(...columns)
     .orderBy('product_id')
 }
+export async function getProductById(
+  productId: number,
+  db = connection,
+): Promise<Product | null> {
+  const product = await db('products').where('product_id', productId).first()
+  return product || null
+}

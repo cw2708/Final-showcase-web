@@ -7,6 +7,8 @@ server.use(express.json())
 
 server.use('/api/v1/products', productRoutes)
 
+server.get('/api/v1/products/:id', productRoutes)
+
 if (process.env.NODE_ENV === 'production') {
   server.use(express.static(Path.resolve('public')))
   server.use('/assets', express.static(Path.resolve('./dist/assets')))

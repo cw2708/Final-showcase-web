@@ -11,6 +11,6 @@ export default createRoutesFromElements(
     <Route path="/Dashboard" element={<Dashboard />} />
     <Route path="/Favourites" element={<Favourites />} />
     <Route path="/Detector" element={<Detector />} />
-    <Route path="/ProductPage" element={<ProductPage />} />
+    <Route path="/ProductPage/:id" element={<ProductPage />} />
   </Route>,
 )
