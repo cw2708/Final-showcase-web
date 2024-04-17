@@ -207,18 +207,18 @@ const CameraComponent: React.FC = () => {
       const centerX = (scaled_pixel_x_min + scaled_pixel_x_max) / 2
       const centerY = (scaled_pixel_y_min + scaled_pixel_y_max) / 2 - 50
 
-      // // Draw the rectangle
-      // context.beginPath()
-      // context.lineWidth = 4
-      // context.strokeStyle = `rgb(${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)})`
+      // Draw the rectangle
+      context.beginPath()
+      context.lineWidth = 4
+      context.strokeStyle = `rgb(${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)})`
 
-      // context.rect(
-      //   scaled_pixel_x_min,
-      //   scaled_pixel_y_min,
-      //   scaled_width,
-      //   scaled_height,
-      // )
-      // context.stroke()
+      context.rect(
+        scaled_pixel_x_min,
+        scaled_pixel_y_min,
+        scaled_width,
+        scaled_height,
+      )
+      context.stroke()
 
       const marker = document.createElement('button')
       marker.className = 'map-marker-button'
@@ -231,7 +231,7 @@ const CameraComponent: React.FC = () => {
       marker.style.cursor = 'pointer'
 
       marker.addEventListener('click', () => {
-        handleObjClick()
+        handleObjClick(detection)
       })
 
       const svgContent = `
@@ -262,8 +262,9 @@ const CameraComponent: React.FC = () => {
 
       container.appendChild(marker)
 
-      const handleObjClick = () => {
-        navigate('/ProductPage')
+      function handleObjClick(detection: any): void {
+        const classId = detection.class_id
+        navigate(`/ProductPage/${classId}`)
       }
     })
   }
