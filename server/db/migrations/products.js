@@ -3,6 +3,7 @@ export async function up(knex) {
     table.increments('product_id').primary()
     table.string('product_name')
     table.integer('product_price')
+    table.string('product_image')
   })
 }
 

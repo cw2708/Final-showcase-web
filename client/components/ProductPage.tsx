@@ -1,7 +1,6 @@
 import Navbar from './Navbar'
 import { useParams } from 'react-router-dom'
 import { useProductById } from '../hooks/hooks'
-
 export default function ProductPage() {
   const { id } = useParams()
   const productId = Number(id)
@@ -34,12 +33,16 @@ export default function ProductPage() {
         <div id="Product-Display-Div">
           <div id="Product-Display-Nav"></div>
           <div id="Product-Display-Image-Div">
-            <img id="Product-Image" alt="Product"></img>
+            <img
+              id="Product-Image"
+              src={data.product_image}
+              alt="Product"
+            ></img>
           </div>
           <div id="Product-Display-Info-Div">
             <div>
-              <h1 id="Product-Heading">{data.product.product_name}</h1>
-              <h2 id="Product-Price">{data.product.product_price}</h2>
+              <h1 id="Product-Heading">{data.product_name}</h1>
+              <h2 id="Product-Price">${data.product_price}</h2>
               <h4>Description:</h4>
               <p></p>
             </div>
